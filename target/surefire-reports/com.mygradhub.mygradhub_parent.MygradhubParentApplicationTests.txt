@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.mygradhub.mygradhub_parent.MygradhubParentApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.030 s -- in com.mygradhub.mygradhub_parent.MygradhubParentApplicationTests
