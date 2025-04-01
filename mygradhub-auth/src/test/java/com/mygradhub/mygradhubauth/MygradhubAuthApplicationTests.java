@@ -1,13 +1,13 @@
-package com.mygradhub.mygradhub_parent;
+package com.mygradhub.mygradhubauth;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class MygradhubParentApplicationTests {
+class MygradhubAuthApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+    @Test
+    void contextLoads() {
+    }
 
 }
