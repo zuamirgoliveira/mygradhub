@@ -11,6 +11,7 @@
 	<groupId>com.mygradhub</groupId>
 	<artifactId>mygradhub-parent</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
 	<name>mygradhub-parent</name>
 	<description>My Grad Hub REST API Parent</description>
 	<url/>
@@ -33,12 +34,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
