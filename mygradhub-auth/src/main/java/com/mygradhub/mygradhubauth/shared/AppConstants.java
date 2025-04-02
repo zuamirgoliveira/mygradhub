@@ -1,0 +1,16 @@
+package com.mygradhub.mygradhubauth.shared;
+
+public final class AppConstants {
+
+    private AppConstants() {}
+
+    public static final String USERNAME_ALREADY_EXISTS = "Login already exists";
+    public static final String USERNAME_NOT_FOUND = "Login not found by login = ";
+    public static final String USER_NOT_FOUND_BY_ID = "User not found by id = ";
+    public static final String USER_NOT_FOUND_BY_EMAIL = "User not found by email = ";
+    public static final String USER_NOT_FOUND_TO_DELETE_BY_ID = "User not found to delete by id = ";
+    public static final String USER_NOT_FOUND_TO_UPDATE_BY_ID = "User not found to update by id = ";
+    public static final String UNAUTHORIZED = "Login Unauthorized, wrong password";
+
+
+}
