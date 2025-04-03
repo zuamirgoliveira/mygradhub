@@ -5,6 +5,7 @@ import com.mygradhub.mygradhubauth.application.dto.UserRequestDTO;
 import com.mygradhub.mygradhubauth.application.dto.UserResponseDTO;
 import com.mygradhub.mygradhubauth.domain.model.User;
 import com.mygradhub.mygradhubauth.domain.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -19,16 +20,6 @@ public class UserAppService {
 
     public UserAppService(UserService service) {
         this.service = service;
-    }
-
-    public UserResponseDTO login(AuthRequestDTO authRequestDTO) {
-        User savedUser = service.findByUsername(authRequestDTO.getUsername(), authRequestDTO.getPassword());
-        return new UserResponseDTO(
-                savedUser.getId(),
-                savedUser.getUsername(),
-                savedUser.getEmail(),
-                savedUser.getRole(),
-                savedUser.getProfilePhoto());
     }
 
     public UserResponseDTO create(UserRequestDTO userRequestDTO) {
