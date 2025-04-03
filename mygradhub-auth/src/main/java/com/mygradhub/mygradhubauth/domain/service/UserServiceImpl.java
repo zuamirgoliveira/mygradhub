@@ -5,11 +5,16 @@ import com.mygradhub.mygradhubauth.domain.repository.UserRepository;
 import com.mygradhub.mygradhubauth.shared.AppConstants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -17,14 +22,17 @@ public class UserServiceImpl implements UserService {
     private static final Logger LOGGER = LogManager.getLogger(UserServiceImpl.class);
 
     private final UserRepository repository;
+    private final PasswordEncoder encoder;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder encoder) {
         this.repository = userRepository;
+        this.encoder = encoder;
     }
 
 
     @Override
     public User create(User user) {
+        user.setPassword(encoder.encode(user.getPassword()));
         validateUsername(user.getUsername());
         return repository.save(user);
     }
@@ -72,31 +80,19 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    @Override
-    public User findByUsername(String username, String password) {
-        User savedUser = repository.findByUsername(username)
-                .orElseThrow(() -> {
-                    LOGGER.error(AppConstants.USERNAME_NOT_FOUND + "{}", username);
-                    return new ResponseStatusException(HttpStatus.NOT_FOUND, AppConstants.USERNAME_NOT_FOUND + username);
-                });
-        return savedUser;
+    private void authenticate(String rawPassword, User savedUser) {
+        if (!encoder.matches(rawPassword, savedUser.getPassword())) {
+            throw new BadCredentialsException(AppConstants.UNAUTHORIZED);
+        }
     }
-
-//    private void authenticate(String password, User savedUser) {
-//        if (!encoder.matches(password, savedUser.getPassword())) {
-//            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, AppConstants.UNAUTHORIZED);
-//        }
-//    }
 
     @Override
     public User findByEmail(String email) {
-        User savedUser = repository.findByEmail(email)
+        return repository.findByEmail(email)
                 .orElseThrow(() -> {
                     LOGGER.error(AppConstants.USER_NOT_FOUND_BY_EMAIL + "{}", email);
                     return new ResponseStatusException(HttpStatus.NOT_FOUND, AppConstants.USER_NOT_FOUND_BY_EMAIL + email);
                 });
-//        authenticate(password, savedUser);
-        return savedUser;
     }
 
     @Override
@@ -112,7 +108,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void validateUsername(String username) {
-        if(repository.findByUsername(username).isPresent()) {
+        if(repository.existsByUsername(username)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, AppConstants.USERNAME_ALREADY_EXISTS);
         }
     }

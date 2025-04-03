@@ -12,10 +12,21 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
+        hbm2ddl:
+          auto: update
   h2:
     console:
       enabled: true
       path: /h2-console
+
+api:
+  security:
+    token:
+      secret: ${JWT_SECRET:my-secret-key}
+jwt:
+  secret-key: ${JWT_SECRET:default-secret}
+  expiration-ms: ${JWT_EXPIRATION_MS:3600000}
+  issuer: MyGradHub
 
 server:
   port: 8081

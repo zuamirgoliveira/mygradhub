@@ -6,9 +6,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Optional;
 
-public interface UserRepository  extends JpaRepository<User, Long> {
+public interface AuthRepository extends JpaRepository<User, Long> {
 
-    Optional<User> findByEmail(String email);
+    Optional<UserDetails> findByUsername(String username);
 
-    boolean existsByUsername(String username);
 }
