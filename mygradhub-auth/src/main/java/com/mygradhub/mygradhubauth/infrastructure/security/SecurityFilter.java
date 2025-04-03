@@ -1,6 +1,6 @@
 package com.mygradhub.mygradhubauth.infrastructure.security;
 
-import com.mygradhub.mygradhubauth.domain.service.AuthService;
+import com.mygradhub.mygradhubauth.domain.service.AuthServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,9 +19,9 @@ public class SecurityFilter extends OncePerRequestFilter {
 
 
     private final TokenService tokenService;
-    private final AuthService authService;
+    private final AuthServiceImpl authService;
 
-    public SecurityFilter(TokenService tokenService, @Lazy AuthService authService) {
+    public SecurityFilter(TokenService tokenService, AuthServiceImpl authService) {
         this.tokenService = tokenService;
         this.authService = authService;
     }
