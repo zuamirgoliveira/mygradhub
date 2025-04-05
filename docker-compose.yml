@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  auth-service:
+    build:
+      context: .
+      dockerfile: mygradhub-auth/Dockerfile
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./mygradhub-auth/src:/app/src  # Live reload
+    environment:
+      - SPRING_DEVTOOLS_REMOTE_SECRET=mysecret
+      - SPRING_DEVTOOLS_LIVERELOAD_ENABLED=true
