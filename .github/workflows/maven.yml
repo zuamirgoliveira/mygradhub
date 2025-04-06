@@ -24,11 +24,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up JDK 17
+      - name: Set up Amazon Corretto JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
-          distribution: 'amazoncorretto'
+          distribution: 'corretto'
           cache: 'maven'
 
       - name: Cache Maven dependencies
