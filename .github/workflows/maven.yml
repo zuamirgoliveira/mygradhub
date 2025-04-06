@@ -41,8 +41,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Validate code format
-        run: mvn spotless:check
+      - name: Check style with Checkstyle
+        run: mvn checkstyle:check
 
       - name: Build and run tests with coverage
         run: mvn -B verify org.jacoco:jacoco-maven-plugin:prepare-agent
