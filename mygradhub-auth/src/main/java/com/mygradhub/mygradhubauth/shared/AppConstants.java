@@ -12,5 +12,9 @@ public final class AppConstants {
     public static final String USER_NOT_FOUND_TO_UPDATE_BY_ID = "User not found to update by id = ";
     public static final String UNAUTHORIZED = "Login Unauthorized, wrong password";
 
+    public static final String TIMESTAMP = "timestamp";
+    public static final String ERRORS = "errors";
+    public static final String INTERNAL_SERVER_ERROR = "Internal server error";
+
 
 }

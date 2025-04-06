@@ -42,11 +42,6 @@ public class AuthController {
         this.authenticationManager = authenticationManager;
     }
 
-    @GetMapping("/hello")
-    public ResponseEntity<String> hello() {
-        return ResponseEntity.ok("Hello World!!!");
-    }
-
     @PostMapping("/signup")
     public ResponseEntity<UserResponseDTO> signup(@Validated @RequestBody UserRequestDTO userRequestDTO) {
         UserResponseDTO createdUser = userAppService.create(userRequestDTO);
@@ -66,15 +61,4 @@ public class AuthController {
         return ResponseEntity.ok(new AuthResponseDTO(token));
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationException(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach(error -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return errors;
-    }
 }
