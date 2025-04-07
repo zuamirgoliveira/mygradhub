@@ -1,7 +1,6 @@
 package com.mygradhub.mygradhubauth.domain.service;
 
 import com.mygradhub.mygradhubauth.domain.model.User;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
 

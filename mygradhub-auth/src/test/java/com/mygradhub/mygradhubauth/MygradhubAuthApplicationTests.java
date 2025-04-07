@@ -8,6 +8,8 @@ class MygradhubAuthApplicationTests {
 
     @Test
     void contextLoads() {
+        // This test ensures that the Spring application context loads correctly.
+        // If there are issues with the configuration, this test will fail.
     }
 
 }

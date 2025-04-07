@@ -1,11 +1,12 @@
 package com.mygradhub.mygradhubauth.infrastructure.security;
 
+import com.mygradhub.mygradhubauth.domain.exception.AuthenticationProcessingException;
 import com.mygradhub.mygradhubauth.domain.service.AuthServiceImpl;
+import com.mygradhub.mygradhubauth.shared.AppConstants;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +17,6 @@ import java.io.IOException;
 
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
-
 
     private final TokenService tokenService;
     private final AuthServiceImpl authService;
@@ -38,14 +38,14 @@ public class SecurityFilter extends OncePerRequestFilter {
             }
             filterChain.doFilter(request, response);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new AuthenticationProcessingException(AppConstants.ERROR_PROCESSING_AUTHENTICATION_FILTER, e);
         }
     }
 
     private String recoverToken(HttpServletRequest request) {
-        var authHeader = request.getHeader("Authorization");
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            return authHeader.replace("Bearer ", "");
+        var authHeader = request.getHeader(AppConstants.AUTHORIZATION);
+        if (authHeader != null && authHeader.startsWith(AppConstants.BEARER_)) {
+            return authHeader.replace(AppConstants.BEARER_, "");
         }
         return null;
     }
