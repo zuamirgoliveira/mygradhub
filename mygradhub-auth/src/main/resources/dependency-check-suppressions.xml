@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+    <!-- Supressão para Spring Framework (falso positivo) -->
+    <suppress>
+        <notes><![CDATA[Using MethodSecurity is not vulnerable in this implementation]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring-security-core@5\.7\.1</packageUrl>
+        <cve>CVE-2023-34034</cve>
+    </suppress>
+</suppressions>
