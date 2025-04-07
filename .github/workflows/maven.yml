@@ -77,9 +77,9 @@ jobs:
         if: >
           (github.ref == 'refs/heads/main') &&
           (github.event_name == 'push' || github.event_name == 'pull_request')
-        working-directory: mygradhub-auth
         run: |
-          mvn sonar:sonar \
+          cd mygradhub-auth
+          mvn verify sonar:sonar \
             -Dsonar.projectKey=com-mygradhub-mygradhub-auth \
             -Dsonar.organization=zuamirgoliveira \
             -Dsonar.host.url=https://sonarcloud.io \
