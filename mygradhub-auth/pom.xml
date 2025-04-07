@@ -28,6 +28,10 @@
     <properties>
         <java.version>17</java.version>
         <log4j-api.version>2.24.3</log4j-api.version>
+        <sonar.projectKey>com-mygradhub-mygradhub-auth</sonar.projectKey>
+        <sonar.organization>com.mygradhub</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.sourceEncoding>UTF-8</sonar.sourceEncoding>
     </properties>
     <dependencies>
         <dependency>
@@ -183,6 +187,19 @@
                         <exclude>**/model/**</exclude>
                     </excludes>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>4.0.0.4121</version>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sonar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
