@@ -1,0 +1,96 @@
+name: My Grad Hub CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+  pull_request:
+    branches: [ "main", "develop" ]
+
+env:
+  MAVEN_OPTS: -Djava.security.egd=file:/dev/./urandom
+  DOCKER_IMAGE_NAME: mygradhub-auth
+
+jobs:
+  build-and-test:
+    name: Build, Test and Analyze
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Amazon Corretto JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'corretto'
+          cache: 'maven'
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.m2/repository
+            target/**
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Check style with Checkstyle
+        run: mvn checkstyle:check
+
+      - name: Build and run tests with coverage
+        run: mvn -B verify org.jacoco:jacoco-maven-plugin:prepare-agent
+
+      - name: Dependency Check
+        run: mvn org.owasp:dependency-check-maven:check
+
+      - name: SonarCloud Scan
+        if: github.ref == 'refs/heads/main'
+        run: mvn sonar:sonar
+        env:
+          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: application-jar
+          path: target/*.jar
+
+  docker-build-and-push:
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'amazoncorretto'
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Build Docker image
+        run: |
+          docker build -t $DOCKER_IMAGE_NAME:latest -t $DOCKER_IMAGE_NAME:${{ github.sha }} ./mygradhub-auth
+          docker tag $DOCKER_IMAGE_NAME:latest ${{ secrets.DOCKER_HUB_USERNAME }}/$DOCKER_IMAGE_NAME:latest
+          docker tag $DOCKER_IMAGE_NAME:${{ github.sha }} ${{ secrets.DOCKER_HUB_USERNAME }}/$DOCKER_IMAGE_NAME:${{ github.sha }}
+
+      - name: Push Docker images
+        run: |
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/$DOCKER_IMAGE_NAME:latest
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/$DOCKER_IMAGE_NAME:${{ github.sha }}
