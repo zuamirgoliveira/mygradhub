@@ -119,10 +119,11 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
-
+          
       - name: Build Docker image
         run: |
-          docker build -t $DOCKER_IMAGE_NAME:latest -t $DOCKER_IMAGE_NAME:${{ github.sha }} ./mygradhub-auth
+          docker build -f mygradhub-auth/Dockerfile \
+          -t $DOCKER_IMAGE_NAME:latest -t $DOCKER_IMAGE_NAME:${{ github.sha }} .
           docker tag $DOCKER_IMAGE_NAME:latest ${{ secrets.DOCKER_HUB_USERNAME }}/$DOCKER_IMAGE_NAME:latest
           docker tag $DOCKER_IMAGE_NAME:${{ github.sha }} ${{ secrets.DOCKER_HUB_USERNAME }}/$DOCKER_IMAGE_NAME:${{ github.sha }}
 
@@ -130,3 +131,4 @@ jobs:
         run: |
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/$DOCKER_IMAGE_NAME:latest
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/$DOCKER_IMAGE_NAME:${{ github.sha }}
+
