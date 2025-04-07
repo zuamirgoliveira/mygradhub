@@ -91,18 +91,12 @@ jobs:
             -Dsonar.qualitygate.timeout=300
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: List target folder
-        run: |
-          ls -lh target
-          cd mygradhub-auth
-          ls -lh target
         
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: application-jar
-          path: target/*.jar
+          path: mygradhub-auth/target/*.jar
 
   docker-build-and-push:
     name: Docker Build and Push
