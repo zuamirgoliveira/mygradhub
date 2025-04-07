@@ -78,7 +78,7 @@ jobs:
           (github.ref == 'refs/heads/main') &&
           (github.event_name == 'push' || github.event_name == 'pull_request')
         run: |
-          mvn sonar:sonar \
+          mvn -f mygradhub-auth/pom.xml sonar:sonar \
             -Dsonar.projectKey=com-mygradhub-mygradhub-auth \
             -Dsonar.organization=zuamirgoliveira \
             -Dsonar.host.url=https://sonarcloud.io \
