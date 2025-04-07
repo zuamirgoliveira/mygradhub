@@ -95,7 +95,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: application-jar
+          name: mygradhub-auth-0.0.1-SNAPSHOT
           path: target/*.jar
 
   docker-build-and-push:
