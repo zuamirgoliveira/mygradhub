@@ -63,7 +63,9 @@ jobs:
              [ -n "$(git diff HEAD^ HEAD **/pom.xml)" ]; then
             mvn org.owasp:dependency-check-maven:check \
               -Ddependency-check.format=HTML \
-              -Ddependency-check.failBuild=false
+              -Ddependency-check.failBuild=false \
+              -Dnvd.api.key=${{ secrets.NVD_API_KEY }} \
+              -Ddependency-check.nvd.validForHours=24
           else
             echo "No significant dependency changes detected."
           fi
