@@ -83,8 +83,8 @@ jobs:
             -Dsonar.organization=zuamirgoliveira \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.login=${{ secrets.SONARCLOUD_TOKEN }} \
-            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
-            -Dsonar.java.binaries=target/classes \
+            -Dsonar.coverage.jacoco.xmlReportPaths=mygradhub-auth/target/site/jacoco/jacoco.xml \
+            -Dsonar.java.binaries=mygradhub-auth/target/classes \
             -Dsonar.qualitygate.wait=true \
             -Dsonar.qualitygate.timeout=300
         env:
