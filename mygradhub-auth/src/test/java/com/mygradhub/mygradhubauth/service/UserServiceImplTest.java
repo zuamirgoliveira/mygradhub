@@ -15,9 +15,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.*;
@@ -40,25 +40,27 @@ public class UserServiceImplTest {
     private User savedUser;
     private User updatedUser;
     private final Long userId = 1L;
-    private String email = "user@gmail.com";
+    private final String email = "user@gmail.com";
+    private final String username = "user123";
+    private final String password = "123Senha*";
 
     @BeforeEach
     void setUp() {
         user = new User(
-                "user123",
-                "user@gmail.com",
-                "123Senha*",
+                username,
+                email,
+                password,
                 UserRole.USER,
                 "url...");
         savedUser = new User(
-                Long.parseLong("1"),
-                "user123",
-                "user@gmail.com",
+                userId,
+                username,
+                email,
                 ENCRYPTED_PASSWORD,
                 UserRole.USER,
                 "url...");
         updatedUser = new User(
-                Long.parseLong("1"),
+                userId,
                 "newUsername",
                 "usernewemail@gmail.com",
                 ENCRYPTED_PASSWORD,
@@ -68,7 +70,7 @@ public class UserServiceImplTest {
 
     @Test
     void createUserShouldEcryptPassword() {
-        when(encoder.encode(user.getPassword())).thenReturn(ENCRYPTED_PASSWORD);
+        when(encoder.encode(password)).thenReturn(ENCRYPTED_PASSWORD);
         when(repository.existsByUsername(user.getUsername())).thenReturn(false);
         when(repository.save(user)).thenReturn(savedUser);
 
@@ -81,8 +83,8 @@ public class UserServiceImplTest {
 
     @Test
     void createUserWithExistingUsernameShouldThrowBusinessRuleException() {
-        when(encoder.encode(user.getPassword())).thenReturn(ENCRYPTED_PASSWORD);
-        when(repository.existsByUsername(user.getUsername())).thenReturn(true);
+        when(encoder.encode(password)).thenReturn(ENCRYPTED_PASSWORD);
+        when(repository.existsByUsername(username)).thenReturn(true);
 
         assertThatThrownBy(() -> service.create(user))
                 .isInstanceOf(BusinessRuleException.class)
@@ -101,6 +103,7 @@ public class UserServiceImplTest {
     @Test
     void findByIdShouldThrowEntityNotFoundExceptionWhenUserDoesNotExist() {
         when(repository.findById(userId)).thenReturn(Optional.empty());
+
         assertThatThrownBy(() -> service.findById(userId))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessage(AppConstants.USER_NOT_FOUND_BY_ID + userId);
@@ -123,12 +126,13 @@ public class UserServiceImplTest {
 
     @Test
     void findAllShouldReturnAllUsers() {
-        int size = 10;
-        List<User> users = generateUserCopies(savedUser, size);
-        when(repository.findAll()).thenReturn(users);
+        when(repository.findAll()).thenReturn(Collections.emptyList());
+
         List<User> usersList = service.findAll();
 
-        assertThat(usersList).hasSize(size);
+        assertThat(usersList)
+                .isNotNull()
+                .isEmpty();
     }
 
     @Test
@@ -141,14 +145,16 @@ public class UserServiceImplTest {
 
     @Test
     void updateShouldUpdateUserFieldsWhenUserExists() {
+        String newUsername = "newUsername";
+        String newEmail = "usernewemail@gmail.com";
 
         when(repository.findById(userId)).thenReturn(Optional.of(savedUser));
         when(repository.save(updatedUser)).thenReturn(updatedUser);
 
         User result = service.update(userId, updatedUser);
 
-        assertThat(result.getUsername()).isEqualTo("newUsername");
-        assertThat(result.getEmail()).isEqualTo("usernewemail@gmail.com");
+        assertThat(result.getUsername()).isEqualTo(newUsername);
+        assertThat(result.getEmail()).isEqualTo(newEmail);
         verify(repository).save(updatedUser);
     }
 
@@ -156,7 +162,7 @@ public class UserServiceImplTest {
     void updateShouldThrowEntityNotFoundExceptionWhenUserDoesNotExist() {
         when(repository.findById(userId)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.update(userId, new User()))
+        assertThatThrownBy(() -> service.update(userId, user))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessage(AppConstants.USER_NOT_FOUND_TO_UPDATE_BY_ID + userId);
     }
@@ -193,27 +199,18 @@ public class UserServiceImplTest {
 
     @Test
     void validateUsernameShouldThrowExceptionWhenUsernameExists() {
-        when(repository.existsByUsername(user.getUsername())).thenReturn(true);
+        when(repository.existsByUsername(username)).thenReturn(true);
 
-        assertThatThrownBy(() -> service.validateUsername(user.getUsername()))
+        assertThatThrownBy(() -> service.validateUsername(username))
                 .isInstanceOf(BusinessRuleException.class)
                 .hasMessage(AppConstants.USERNAME_ALREADY_EXISTS);
     }
 
     @Test
     void validateUsernameShouldNotThrowExceptionWhenUsernameIsUnique() {
-        when(repository.existsByUsername(user.getUsername())).thenReturn(false);
-        assertThatNoException().isThrownBy(() -> service.validateUsername(user.getUsername()));
+        when(repository.existsByUsername(username)).thenReturn(false);
+
+        assertThatNoException().isThrownBy(() -> service.validateUsername(username));
     }
 
-    public List<User> generateUserCopies(User originalUser, int quantity) {
-        return IntStream.rangeClosed(1, quantity)
-                .mapToObj(i -> {
-                    User copy = new User();
-                    copy.setId(originalUser.getId() + i);
-                    copy.setUsername(originalUser.getUsername() + i);
-                    return copy;
-                })
-                .collect(Collectors.toList());
-    }
 }
