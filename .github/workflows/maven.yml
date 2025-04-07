@@ -61,7 +61,7 @@ jobs:
           if [[ "${{ github.ref }}" == "refs/heads/main" || "${{ github.ref }}" == "refs/heads/develop" ]] || 
              [ -n "$(git diff HEAD^ HEAD pom.xml)" ] || 
              [ -n "$(git diff HEAD^ HEAD **/pom.xml)" ]; then
-            mvn org.owasp:dependency-check-maven:12.1.1check \
+            mvn org.owasp:dependency-check-maven:12.1.1:check \
               -Ddependency-check.skipUpdates=true \
               -Ddependency-check.format=HTML \
               -Ddependency-check.failBuild=false \
