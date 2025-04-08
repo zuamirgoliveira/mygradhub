@@ -1,86 +1,143 @@
-## My Grad Hub (MGH) - Graduation Party Management
-### 📌 Overview
-**My Grad Hub** is a graduation party management application built with:
-- Hexagonal Architecture
-- Spring Boot 3.4.4
-- Java 17
-- H2 (in-memory for initial development)
+# MyGradHub - Auth Service
 
-###📦 Project Structure
+Welcome to the **MyGradHub Auth Service** project! This microservice is responsible for handling user authentication and registration. It is built using **Spring Boot**, follows a clean architecture, and is fully containerized with Docker. Continuous Integration is managed via **GitHub Actions**, and code quality is enforced through **SonarCloud**.
 
-mygradhub/
-├── pom.xml                  # Parent POM  
-├── mygradhub-auth/          # Authentication Service  
-├── mygradhub-events/        # Events Service  
-└── mygradhub-payments/      # Payments Service
+---
 
-### 🔧 Initial Setup
-Prerequisites
-- JDK 17
+## ✨ Overview
+
+This service provides:
+
+- User registration and login
+- JWT-based authentication
+- API documentation via Swagger
+- H2 database console for local development
+
+Technologies used:
+
+- Java 17 + Spring Boot
+- Maven for build and dependency management
+- H2 Database (dev)
+- JWT (JSON Web Token)
+- Docker for containerization
+- GitHub Actions for CI/CD
+- SonarCloud for code quality and static analysis
+
+---
+
+## 🚀 Setup & Running Locally
+
+### Prerequisites
+
+- Java 17+
 - Maven 3.8+
-- IDE of your choice
+- Docker & Docker Compose (if running containerized)
 
-How to Run
-1. Clone the repository
-2. Build the project:
+### Clone the repository
+
 ```bash
-mvn clean install
+git clone https://github.com/zuamirgoliveira/mygradhub.git
+cd mygradhub
 ```
-3. Start each service:
+
+### Run locally (Dev Mode)
+
 ```bash
-cd mygradhub-auth && mvn spring-boot:run  
-cd ../mygradhub-events && mvn spring-boot:run  
-cd ../mygradhub-payments && mvn spring-boot:run  
+cd mygradhub-auth
+mvn spring-boot:run
 ```
-Local Access
-- Auth Service: http://localhost:8081
-- Events Service: http://localhost:8082
-- Payments Service: http://localhost:8083
-- H2 Consoles:
-    - Auth: http://localhost:8081/h2-console
-    - Events: http://localhost:8082/h2-console
-    - Payments: http://localhost:8083/h2-console
 
-### 📋 Product Backlog (Prioritized) - [Trello Kanban](https://trello.com/b/fSosNXoX/kanban-my-grad-hub-sprint1) 
-#### Day 1: Foundations
-- [MGH-001] Set up Maven multi-module structure
-- [MGH-002] Implement JWT registration/login
-- [MGH-003] Configure H2 in-memory
-- [MGH-004] Document architecture
-#### Day 2: Event Management
-- [MGH-005] Create/edit events with basic data
-- [MGH-006] Implement event registration
-- [MGH-007] Configure service discovery
-- [MGH-008] Add unit tests
-#### Day 3: Payments
-- [MGH-009] Implement payment flow
-- [MGH-010] Process payment confirmations
-- [MGH-011] Implement Saga Pattern
-- [MGH-012] Configure centralized logs
-#### Day 4: Frontend Foundations
-- [MGH-013] Basic Angular frontend (Auth module)
-- [MGH-014] Event listing frontend
-#### Day 5: System Resilience
-- [MGH-019] Add health checks and metrics
-- [MGH-018] Implement circuit breaker
-#### Day 6: Quality Assurance
-- [MGH-021] Integration tests with Testcontainers
-- [MGH-022] Code analysis with SonarQube
-- [MGH-023] Validate end-to-end flows
-#### Day 7: Documentation Finalization
-- [MGH-024] Complete technical documentation
-- [MGH-025] Justify architecture decisions
+### Run with Docker
 
-### 🛠️ Key Technologies
-- Backend: Spring Boot 3.4.4, Hibernate, JWT
-- Database: H2 (dev)
-- Frontend: Angular (to be implemented)
-- Architecture: Hexagonal + DDD
+```bash
+docker pull zuamirooliveira/mygradhub-auth:latest
 
-### 🌱 Next Steps
-- Implement RabbitMQ for inter-service communication
-- Add Eureka for service discovery
-- Configure PostgreSQL for production
-- Develop Angular frontend
+docker run -p 8081:8081 zuamirooliveira/mygradhub-auth:latest
+```
 
-✍️ My Grad Hub Team
+---
+
+## 🕹️ Local API Access
+
+- Swagger UI: [http://localhost:8081/swagger-ui/index.html](http://localhost:8081/swagger-ui/index.html)
+- API Docs: [http://localhost:8081/v3/api-docs](http://localhost:8081/v3/api-docs)
+- H2 Console: [http://localhost:8081/h2-console](http://localhost:8081/h2-console)
+
+### Main Endpoints
+
+| Method | Endpoint              | Description                 | Auth Required |
+| ------ | --------------------- | --------------------------- | ------------- |
+| POST   | `/api/v1/auth/signup` | Register a new user         | No            |
+| POST   | `/api/v1/auth/login`  | Login and receive JWT token | No            |
+| GET    | `/api/v1/users`       | List all users              | Yes (JWT)     |
+
+---
+
+## ⚙️ Architecture
+
+- **Domain Driven Design (DDD)** approach with separation of concerns
+- Follows layered architecture: `controller`, `service`, `repository`, and `model`
+- Uses **@ControllerAdvice** for global exception handling
+- Integrated validation with detailed error response mapping
+
+---
+
+## ♻️ Continuous Integration
+
+CI/CD is handled by **GitHub Actions**:
+
+- Compile and test with coverage
+- Static code analysis (Checkstyle, OWASP Dependency Check)
+- SonarCloud analysis
+- Docker image build and push to DockerHub
+
+### Useful Links
+
+- GitHub Actions: [CI Pipeline](https://github.com/zuamirgoliveira/mygradhub/actions)
+- SonarCloud Dashboard: [View Analysis](https://sonarcloud.io/summary/overall?id=com-mygradhub-mygradhub-auth\&branch=main)
+- DockerHub: [Image Repository](https://hub.docker.com/r/zuamirooliveira/mygradhub-auth/tags)
+- Trello Board: [Sprint Tracking](https://trello.com/b/fSosNXoX/kanban-my-grad-hub-sprint1)
+
+---
+
+## 🌐 Environment Variables
+
+| Variable                 | Description                      |
+| ------------------------ | -------------------------------- |
+| `JWT_SECRET`             | Secret key for JWT signing       |
+| `JWT_ISSUER`             | Token issuer                     |
+| `SPRING_PROFILES_ACTIVE` | Active profile (e.g., `default`) |
+
+Can be passed via `application.properties` or environment.
+
+---
+
+## 🚫 Security
+
+- JWT authentication for protected routes
+- Custom Spring Security filter for token validation
+- Graceful handling of expired or invalid tokens
+
+---
+
+## 🚧 Development Notes
+
+- Code coverage is enforced by SonarCloud (currently set at 80%)
+- Swagger provides clear API contract for integration
+- For contributing, follow the clean code practices and test your changes
+
+---
+
+## 🙌 Contributing
+
+Feel free to fork the project and submit a pull request. For ideas and roadmap, check the [Trello board](https://trello.com/b/fSosNXoX/kanban-my-grad-hub-sprint1).
+
+---
+
+## 🏆 Author
+
+**Zuamir Oliveira**\
+[GitHub Profile](https://github.com/zuamirgoliveira)
+
+"Comecei algo grande que ainda não terminou. O prazo pode ter acabado, mas  o desenvolvimento continua"
+
