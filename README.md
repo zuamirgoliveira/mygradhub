@@ -57,6 +57,38 @@ docker run -p 8081:8081 zuamirooliveira/mygradhub-auth:latest
 
 ---
 
+## 🧪 Running Tests & Viewing Coverage
+
+### Run Tests
+
+```bash
+mvn clean test
+```
+
+### Generate JaCoCo Coverage Report
+
+```bash
+mvn clean verify
+```
+
+After execution, open the coverage report in your browser:
+
+```
+target/site/jacoco/index.html
+```
+
+### Run with SonarCloud (optional)
+
+```bash
+mvn clean verify sonar:sonar \
+  -Dsonar.projectKey=<seu-projectKey> \
+  -Dsonar.organization=<sua-org> \
+  -Dsonar.host.url=https://sonarcloud.io \
+  -Dsonar.token=<seu-token>
+```
+
+---
+
 ## 🕹️ Local API Access
 
 - Swagger UI: [http://localhost:8081/swagger-ui/index.html](http://localhost:8081/swagger-ui/index.html)
