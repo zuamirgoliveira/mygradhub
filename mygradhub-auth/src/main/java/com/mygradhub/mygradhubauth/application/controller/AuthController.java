@@ -6,6 +6,7 @@ import com.mygradhub.mygradhubauth.application.dto.UserRequestDTO;
 import com.mygradhub.mygradhubauth.application.dto.UserResponseDTO;
 import com.mygradhub.mygradhubauth.application.service.UserAppService;
 import com.mygradhub.mygradhubauth.infrastructure.security.TokenService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -32,6 +33,7 @@ public class AuthController {
         this.authenticationManager = authenticationManager;
     }
 
+    @Operation(summary = "signup", security = {})
     @PostMapping("/signup")
     public ResponseEntity<UserResponseDTO> signup(@Validated @RequestBody UserRequestDTO userRequestDTO) {
         UserResponseDTO createdUser = userAppService.create(userRequestDTO);
@@ -43,6 +45,7 @@ public class AuthController {
         return ResponseEntity.created(location).body(createdUser);
     }
 
+    @Operation(summary = "login", security = {})
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDTO> login(@Validated @RequestBody AuthRequestDTO dto) {
         var usernamePassword = new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword());

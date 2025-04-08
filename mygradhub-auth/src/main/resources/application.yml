@@ -39,3 +39,12 @@ logging:
     root: INFO
     org.springframework: INFO
     com.mygradhub: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
