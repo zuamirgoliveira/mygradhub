@@ -65,11 +65,14 @@ docker run -p 8081:8081 zuamirooliveira/mygradhub-auth:latest
 
 ### Main Endpoints
 
-| Method | Endpoint              | Description                 | Auth Required |
-| ------ | --------------------- | --------------------------- | ------------- |
-| POST   | `/api/v1/auth/signup` | Register a new user         | No            |
-| POST   | `/api/v1/auth/login`  | Login and receive JWT token | No            |
-| GET    | `/api/v1/users`       | List all users              | Yes (JWT)     |
+| Method | Endpoint                    | Description                 | Auth Required |
+| ------ | --------------------------- | --------------------------- | ------------- |
+| POST   | `/api/v1/auth/signup`       | Register a new user         | No            |
+| POST   | `/api/v1/auth/login`        | Login and receive JWT token | No            |
+| GET    | `/api/v1/users`             | List all users              | Yes (JWT)     |
+| GET    | `/api/v1/users/{id}`        | Get user by ID              | Yes (JWT)     |
+| PUT    | `/api/v1/users/{id}`        | Update user by ID           | Yes (JWT)     |
+| DELETE | `/api/v1/users/{id}`        | Delete user by ID           | Yes (JWT)     |
 
 ---
 
@@ -94,7 +97,7 @@ CI/CD is handled by **GitHub Actions**:
 ### Useful Links
 
 - GitHub Actions: [CI Pipeline](https://github.com/zuamirgoliveira/mygradhub/actions)
-- SonarCloud Dashboard: [View Analysis](https://sonarcloud.io/summary/overall?id=com-mygradhub-mygradhub-auth\&branch=main)
+- SonarCloud Dashboard: [View Analysis](https://sonarcloud.io/summary/overall?id=com-mygradhub-mygradhub-auth&branch=main)
 - DockerHub: [Image Repository](https://hub.docker.com/r/zuamirooliveira/mygradhub-auth/tags)
 - Trello Board: [Sprint Tracking](https://trello.com/b/fSosNXoX/kanban-my-grad-hub-sprint1)
 
@@ -109,6 +112,59 @@ CI/CD is handled by **GitHub Actions**:
 | `SPRING_PROFILES_ACTIVE` | Active profile (e.g., `default`) |
 
 Can be passed via `application.properties` or environment.
+
+---
+
+## 🔍 Health Check
+
+This project exposes a **health check endpoint** via Spring Boot Actuator, which helps external tools (like Docker, Kubernetes, or monitoring systems) determine the application's status.
+
+### 🧪 Available Endpoint
+
+| Method | Endpoint           | Description            |
+|--------|--------------------|------------------------|
+| GET    | `/actuator/health` | Returns health status  |
+
+You can test it locally via:
+```bash
+curl http://localhost:8081/actuator/health
+```
+
+Expected response (types only):
+```json
+{
+  "status": "String",
+  "components": {
+    "db": {
+      "status": "String",
+      "details": {
+        "database": "String",
+        "validationQuery": "String"
+      }
+    },
+    "diskSpace": {
+      "status": "String",
+      "details": {
+        "total": "Number",
+        "free": "Number",
+        "threshold": "Number",
+        "path": "String",
+        "exists": "Boolean"
+      }
+    },
+    "ping": {
+      "status": "String"
+    },
+    "ssl": {
+      "status": "String",
+      "details": {
+        "validChains": "Array",
+        "invalidChains": "Array"
+      }
+    }
+  }
+}
+```
 
 ---
 
@@ -139,5 +195,5 @@ Feel free to fork the project and submit a pull request. For ideas and roadmap, 
 **Zuamir Oliveira**\
 [GitHub Profile](https://github.com/zuamirgoliveira)
 
-"Comecei algo grande que ainda não terminou. O prazo pode ter acabado, mas  o desenvolvimento continua"
+"Comecei algo grande que ainda não terminou. O prazo pode ter acabado, mas o desenvolvimento continua."
 
