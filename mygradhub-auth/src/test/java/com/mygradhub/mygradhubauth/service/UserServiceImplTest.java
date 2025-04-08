@@ -167,23 +167,11 @@ public class UserServiceImplTest {
 
     @Test
     void deleteByIdShouldReturnTrueWhenUserIsDeleted() {
-        when(repository.existsById(userId)).thenReturn(false);
         when(repository.findById(userId)).thenReturn(Optional.of(user));
 
-        boolean isDeleted = service.deleteById(userId);
+        service.deleteById(userId);
 
-        assertThat(isDeleted).isTrue();
         verify(repository).deleteById(userId);
-    }
-
-    @Test
-    void deleteByIdShouldReturnFalseWhenUserIsDeleted() {
-        when(repository.existsById(userId)).thenReturn(true);
-        when(repository.findById(userId)).thenReturn(Optional.of(user));
-
-        boolean isDeleted = service.deleteById(userId);
-
-        assertThat(isDeleted).isFalse();
     }
 
     @Test

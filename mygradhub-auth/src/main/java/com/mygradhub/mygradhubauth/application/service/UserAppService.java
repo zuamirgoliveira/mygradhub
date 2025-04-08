@@ -68,6 +68,10 @@ public class UserAppService {
                 updatedUser.getProfilePhoto());
     }
 
+    public void deleteById(Long id) {
+        service.deleteById(id);
+    }
+
     public List<UserResponseDTO> convertSafely(List<User> users) {
         return Optional.ofNullable(users)
                 .orElseGet(Collections::emptyList)
