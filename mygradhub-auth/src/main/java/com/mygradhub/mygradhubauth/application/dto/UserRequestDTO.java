@@ -26,4 +26,7 @@ public class UserRequestDTO {
     private UserRole role;
 
     private String profilePhoto;
+
+    public UserRequestDTO(String john, String mail, String pass, String user, String image) {
+    }
 }
