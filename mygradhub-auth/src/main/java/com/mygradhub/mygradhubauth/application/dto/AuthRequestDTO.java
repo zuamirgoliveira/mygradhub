@@ -15,5 +15,6 @@ public class AuthRequestDTO {
     private String email;
 
 
-
+    public AuthRequestDTO(String john, String pass, String mail) {
+    }
 }

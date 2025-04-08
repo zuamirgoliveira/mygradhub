@@ -1,0 +1,27 @@
+version: "1.0"
+constraints:
+  - layer: controller
+    packages:
+      - "com.mygradhub.mygradhubauth.api"
+      - "com.mygradhub.mygradhubauth.controller"
+    canUse:
+      - application
+
+  - layer: application
+    packages:
+      - "com.mygradhub.mygradhubauth.application"
+      - "com.mygradhub.mygradhubauth.service"
+    canUse:
+      - domain
+
+  - layer: domain
+    packages:
+      - "com.mygradhub.mygradhubauth.domain"
+    canUse: []
+
+  - layer: infrastructure
+    packages:
+      - "com.mygradhub.mygradhubauth.infrastructure"
+    canUse:
+      - application
+      - domain
