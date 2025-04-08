@@ -69,14 +69,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean deleteById(Long id) {
+    public void deleteById(Long id) {
         repository.findById(id)
                 .orElseThrow(() -> {
                     LOGGER.error(AppConstants.USER_NOT_FOUND_TO_DELETE_BY_ID + "{}", id);
                     return new EntityNotFoundException(AppConstants.USER_NOT_FOUND_TO_DELETE_BY_ID + id);
                 });
         repository.deleteById(id);
-        return !repository.existsById(id);
     }
 
     @Override
