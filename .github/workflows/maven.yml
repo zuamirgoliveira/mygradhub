@@ -1,4 +1,4 @@
-name: My Grad Hub CI/CD Pipeline
+name: My Grad Hub CI Pipeline
 
 on:
   push:
@@ -41,52 +41,89 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Check style with Checkstyle
+      - name: Cache OWASP Data
+        uses: actions/cache@v3
+        with:
+          path: ~/.dependency-check/data
+          key: ${{ runner.os }}-owasp-data-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-owasp-data-
+
+      - name: Check code style
         run: mvn checkstyle:check
 
       - name: Build and run tests with coverage
-        run: mvn -B verify org.jacoco:jacoco-maven-plugin:prepare-agent
+        run: mvn clean verify
 
-      - name: Dependency Check
-        run: mvn org.owasp:dependency-check-maven:check
+      - name: OWASP Dependency Check
+        run: |
+          echo "Checking for dependency changes..."
+          if [[ "${{ github.ref }}" == "refs/heads/main" || "${{ github.ref }}" == "refs/heads/develop" ]] || 
+             [ -n "$(git diff HEAD^ HEAD pom.xml)" ] || 
+             [ -n "$(git diff HEAD^ HEAD **/pom.xml)" ]; then
+            mvn org.owasp:dependency-check-maven:12.1.1:check \
+              -Ddependency-check.skipUpdates=true \
+              -Ddependency-check.format=HTML \
+              -Ddependency-check.failBuild=false \
+              -Dnvd.api.key=${{ secrets.NVD_API_KEY }} \
+              -Ddependency-check.nvd.validForHours=24
+          else
+            echo "No significant dependency changes detected."
+          fi
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+        timeout-minutes: 20
 
       - name: SonarCloud Scan
-        if: github.ref == 'refs/heads/main'
-        run: mvn sonar:sonar
+        if: >
+          (github.ref == 'refs/heads/main') &&
+          (github.event_name == 'push' || github.event_name == 'pull_request')
+        run: |
+          cd mygradhub-auth
+          mvn verify sonar:sonar \
+            -Dsonar.projectKey=com-mygradhub-mygradhub-auth \
+            -Dsonar.organization=zuamirgoliveira \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=${{ secrets.SONARCLOUD_TOKEN }} \
+            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
+            -Dsonar.java.binaries=target/classes \
+            -Dsonar.qualitygate.wait=true \
+            -Dsonar.qualitygate.timeout=300
         env:
-          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+        
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: application-jar
-          path: target/*.jar
+          path: mygradhub-auth/target/*.jar
 
   docker-build-and-push:
+    name: Docker Build and Push
     needs: build-and-test
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Download application artifact
+        uses: actions/download-artifact@v4
         with:
-          java-version: '17'
-          distribution: 'amazoncorretto'
+          name: application-jar
+          path: mygradhub-auth/target
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
-
+          
       - name: Build Docker image
         run: |
-          docker build -t $DOCKER_IMAGE_NAME:latest -t $DOCKER_IMAGE_NAME:${{ github.sha }} ./mygradhub-auth
+          docker build -f mygradhub-auth/Dockerfile \
+          -t $DOCKER_IMAGE_NAME:latest -t $DOCKER_IMAGE_NAME:${{ github.sha }} .
           docker tag $DOCKER_IMAGE_NAME:latest ${{ secrets.DOCKER_HUB_USERNAME }}/$DOCKER_IMAGE_NAME:latest
           docker tag $DOCKER_IMAGE_NAME:${{ github.sha }} ${{ secrets.DOCKER_HUB_USERNAME }}/$DOCKER_IMAGE_NAME:${{ github.sha }}
 
@@ -94,3 +131,4 @@ jobs:
         run: |
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/$DOCKER_IMAGE_NAME:latest
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/$DOCKER_IMAGE_NAME:${{ github.sha }}
+

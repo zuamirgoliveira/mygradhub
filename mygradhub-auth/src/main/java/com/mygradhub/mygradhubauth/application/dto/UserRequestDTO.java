@@ -18,7 +18,7 @@ public class UserRequestDTO {
     private String email;
 
     @Pattern(
-            regexp = "^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9]).{8,}$",
+            regexp = "^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*\\d).{8,}$",
             message = "Password must be minimum 8 characters"
     )
     private String password;

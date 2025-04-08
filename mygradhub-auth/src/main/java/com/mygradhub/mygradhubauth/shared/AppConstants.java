@@ -16,5 +16,16 @@ public final class AppConstants {
     public static final String ERRORS = "errors";
     public static final String INTERNAL_SERVER_ERROR = "Internal server error";
 
+    public static final String AUTHORIZATION = "Authorization";
+    public static final String BEARER_ = "Bearer ";
+    public static final String ERROR_PROCESSING_AUTHENTICATION_FILTER = "Error processing authentication filter";
+
+    public static final String ERROR_WHILE_GENERATING_TOKEN = "Error while generating token";
+    public static final String EXPIRED_TOKEN = "Expired token";
+    public static final String INVALID_TOKEN = "Invalid token";
+
+    public static final String AUTH_EXPIRED = "AUTH_EXPIRED";
+    public static final String AUTH_INVALID = "AUTH_INVALID";
+    public static final String TYPE = "type";
 
 }

@@ -18,7 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -130,9 +129,8 @@ public class UserServiceImplTest {
 
         List<User> usersList = service.findAll();
 
-        assertThat(usersList)
-                .isNotNull()
-                .isEmpty();
+        assertThat(usersList).isNotNull();
+        assertThat(usersList).isEmpty();
     }
 
     @Test

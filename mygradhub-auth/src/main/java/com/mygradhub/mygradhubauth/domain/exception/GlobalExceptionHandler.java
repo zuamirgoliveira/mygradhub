@@ -56,11 +56,29 @@ public class GlobalExceptionHandler {
     private static void mapFieldsError(MethodArgumentNotValidException ex, ProblemDetail problem) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach(error -> {
-            String fieldName = error instanceof FieldError
-                    ? ((FieldError) error).getField()
+            String fieldName = (error instanceof FieldError fieldError)
+                    ? fieldError.getField()
                     : error.getObjectName();
             errors.put(fieldName, error.getDefaultMessage());
         });
         problem.setProperty(AppConstants.ERRORS, errors);
+    }
+
+    @ExceptionHandler(TokenExpiredCustomException.class)
+    public ResponseEntity<ProblemDetail> handleTokenExpired(TokenExpiredCustomException ex) {
+        ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
+        problem.setTitle(AppConstants.EXPIRED_TOKEN);
+        problem.setDetail(ex.getMessage());
+        problem.setProperty(AppConstants.TYPE, AppConstants.AUTH_EXPIRED);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(problem);
+    }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<ProblemDetail> handleInvalidToken(InvalidTokenException ex) {
+        ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
+        problem.setTitle(AppConstants.INVALID_TOKEN);
+        problem.setDetail(ex.getMessage());
+        problem.setProperty(AppConstants.TYPE, AppConstants.AUTH_INVALID);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(problem);
     }
 }

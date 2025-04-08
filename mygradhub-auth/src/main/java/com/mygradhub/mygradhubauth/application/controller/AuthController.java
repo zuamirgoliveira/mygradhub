@@ -5,32 +5,22 @@ import com.mygradhub.mygradhubauth.application.dto.AuthResponseDTO;
 import com.mygradhub.mygradhubauth.application.dto.UserRequestDTO;
 import com.mygradhub.mygradhubauth.application.dto.UserResponseDTO;
 import com.mygradhub.mygradhubauth.application.service.UserAppService;
-import com.mygradhub.mygradhubauth.domain.model.User;
 import com.mygradhub.mygradhubauth.infrastructure.security.TokenService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
-
-    private static final Logger logger = LogManager.getLogger(AuthController.class);
 
     private final UserAppService userAppService;
     private final TokenService tokenService;
