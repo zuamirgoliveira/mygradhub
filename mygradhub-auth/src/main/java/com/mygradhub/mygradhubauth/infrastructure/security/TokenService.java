@@ -5,8 +5,9 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.mygradhub.mygradhubauth.domain.exception.InvalidTokenException;
+import com.mygradhub.mygradhubauth.domain.exception.TokenExpiredCustomException;
+import com.mygradhub.mygradhubauth.shared.AppConstants;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.stereotype.Service;
@@ -15,8 +16,6 @@ import java.time.Instant;
 
 @Service
 public class TokenService {
-
-    private static final Logger logger = LogManager.getLogger(TokenService.class);
 
     @Value("${jwt.secret-key}")
     private String jwtSecret;
@@ -36,7 +35,7 @@ public class TokenService {
                     .withExpiresAt(generateExpiration())
                     .sign(algorithm);
         } catch (JWTCreationException e) {
-            throw new AuthenticationServiceException("Error while generating token", e);
+            throw new AuthenticationServiceException(AppConstants.ERROR_WHILE_GENERATING_TOKEN, e);
         }
     }
 
@@ -65,9 +64,9 @@ public class TokenService {
                     .verify(token);
             return true;
         } catch (TokenExpiredException e) {
-            throw new RuntimeException("Token expirado", e);
+            throw new TokenExpiredCustomException(AppConstants.EXPIRED_TOKEN, e);
         } catch (JWTVerificationException e) {
-            throw new RuntimeException("Token inválido", e);
+            throw new InvalidTokenException(AppConstants.INVALID_TOKEN, e);
         }
     }
 }

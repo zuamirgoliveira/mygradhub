@@ -1,9 +1,7 @@
 package com.mygradhub.mygradhubauth.application.dto;
 
-import com.mygradhub.mygradhubauth.domain.model.User;
 import com.mygradhub.mygradhubauth.domain.model.UserRole;
 import lombok.Data;
-import org.apache.logging.log4j.core.config.plugins.validation.constraints.NotBlank;
 
 @Data
 public class UserResponseDTO {
